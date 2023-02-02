@@ -129,6 +129,7 @@ abstract class Constant{
   static const Email_txt = "Email";
   static const Phone_txt = "Phone";
   static const Gender_txt = "Gender";
+  static const profile_upload_txt = "Upload new photo";
   static const DOB_txt = "D.O.B";
 
 
@@ -142,6 +143,8 @@ class ApiRoute{
   static const case_details = "/api/common/case/details/";
   static const case_orders = "/api/user/my/orders";
   static const  case_updates = "/api/update/case/";
+  static const  profile = "/api/common/myprofile";
+  static const  update_profile = "/api/user/update/profile";
 }
 
 class AppColors {

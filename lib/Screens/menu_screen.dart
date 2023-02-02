@@ -34,10 +34,10 @@ class _MenuScreenState extends State<MenuScreen> {
 
                 child: GestureDetector(
                     onTap: (){
-                      Navigator.pushReplacement(context,
+                      Navigator.push(context,
                         MaterialPageRoute(builder:
                             (context) =>
-                            DrawerScreen(place: profile_screen())),
+                            DrawerScreen(place: Profile_screen())),
                       );
                     },
                     child: Text(Constant.Profile_txt,style:TextStyle(fontSize: 16,fontFamily: 'Inter',fontWeight:FontWeight.w400,color: Colors.white),)),
@@ -51,7 +51,7 @@ class _MenuScreenState extends State<MenuScreen> {
 
                 child: GestureDetector(
                     onTap: (){
-                      Navigator.pushReplacement(context,
+                      Navigator.push(context,
                         MaterialPageRoute(builder:
                             (context) =>
                             DrawerScreen(place: chalander_screen())),
@@ -67,10 +67,10 @@ class _MenuScreenState extends State<MenuScreen> {
 
                 child: GestureDetector(
                     onTap: (){
-                      Navigator.pushReplacement(context,
+                      Navigator.push(context,
                         MaterialPageRoute(builder:
                             (context) =>
-                            DrawerScreen(place: profile_screen())),
+                            DrawerScreen(place: Profile_screen())),
                       );
                     },
                     child: Text(Constant.Orders_txt,style:TextStyle(fontSize: 16,fontFamily: 'Inter',fontWeight:FontWeight.w400,color: Colors.white),)),
@@ -130,7 +130,7 @@ class _MenuScreenState extends State<MenuScreen> {
   Future removepreference(String key) async {
     SharedPreferences prefrences = await SharedPreferences.getInstance();
     prefrences.remove(key);
-    Navigator.pushReplacement(context,
+    Navigator.push(context,
       MaterialPageRoute(builder:
           (context) =>
 

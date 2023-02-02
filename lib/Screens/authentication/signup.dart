@@ -589,7 +589,7 @@ print("response"+response.statusCode.toString());
       APIService.checkAndShowCircularDialog(context, true);
       print("failed"+response.statusCode.toString());
       Login succeededResponse =
-      lognFromJson(response.body);
+      loginFromJson(response.body);
       Utility.show_Dialog(
           context, "success", succeededResponse.data.toString());
       Navigator.push(

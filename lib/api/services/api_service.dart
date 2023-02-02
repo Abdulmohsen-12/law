@@ -89,7 +89,7 @@ abstract class APIService {
         // If a success response
         if (response.statusCode == 200) {
           print("order suceess");
-          checkAndShowCircularDialog(context, false);
+          checkAndShowCircularDialog(context, true);
           String responseBody;
           // Check whether the response is cipher or not
 
@@ -130,7 +130,7 @@ abstract class APIService {
   }
 
   static Future<String> getAPI(
-      {required Map<String, dynamic> data,
+      { Map<String, dynamic>? data,
         required String Route,
         required BuildContext context,
         required bool show_CircularDialog}) async {
@@ -145,6 +145,7 @@ abstract class APIService {
 
     String _responseBody = "";
     try {
+      checkAndShowCircularDialog(context, true);
       //checkAndShowCircularDialog(context, show_CircularDialog);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       print(prefs.getString("accesstoken"));
@@ -160,6 +161,7 @@ abstract class APIService {
       _responseBody =
       await checkResponse(response, context, show_CircularDialog);
       print(response.body);
+
 
     } on SocketException {
       //checkAndShowCircularDialog(context, show_CircularDialog);
@@ -234,7 +236,7 @@ Future loginpostData(String email,String password) async {
   if (response.statusCode == 200) {
 
     Login succeededResponse =
-    lognFromJson(response.body);
+    loginFromJson(response.body);
     print("successfull"+succeededResponse.data.user.name);
     prefs.setString("accesstoken",succeededResponse.data.accessToken);
 
