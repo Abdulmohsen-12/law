@@ -115,6 +115,7 @@ abstract class Constant{
   static const Schedule_txt = "My Schedule";
   static const Orders_txt = "My Orders";
   static const Customer_Support_txt = "Customer Support";
+  static const pricelist_txt = "Price List";
   static const FAQs_txt = "FAQs";
   static const Language_txt = "Language";
   static const Sign_out_txt = "Sign-out";
@@ -133,18 +134,24 @@ abstract class Constant{
   static const DOB_txt = "D.O.B";
 
 
+  //pricelist
+  static const individual_txt = "individual";
+  static const Corporate_txt = "individual";
+
+
 
 
 
 
 }
 class ApiRoute{
-  static const createcase = "/api/user/create/case";
-  static const case_details = "/api/common/case/details/";
-  static const case_orders = "/api/user/my/orders";
-  static const  case_updates = "/api/update/case/";
+  static const createcase = "user/create/case";
+  static const case_details = "common/case/details/";
+  static const case_orders = "user/my/orders";
+  static const  case_updates = "update/case/";
   static const  profile = "/api/common/myprofile";
-  static const  update_profile = "/api/user/update/profile";
+  static const  update_profile = "user/update/profile";
+  static const  price_list = "common/price/list";
 }
 
 class AppColors {
@@ -154,6 +161,7 @@ class AppColors {
   static const blue_light = const Color(0xFF3A4D63);
   static const blue_light_grid = const Color(0xB33A4D63);
   static const profile_pref_nameclr= const Color(0xFF4F4F4F);
+  static const pricecolor= const Color(0xFF03172D);
 
 
 }

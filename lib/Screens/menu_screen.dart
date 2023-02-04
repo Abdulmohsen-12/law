@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:law/Screens/drawer_screen.dart';
 import 'package:law/Screens/orderdetails.dart';
+import 'package:law/Screens/price_list.dart';
 import 'package:law/Screens/profile/myprofile.dart';
 import 'package:law/utils/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -86,6 +87,22 @@ class _MenuScreenState extends State<MenuScreen> {
 
                     },
                     child: Text(Constant.Customer_Support_txt,style:TextStyle(fontSize: 16,fontFamily: 'Inter',fontWeight:FontWeight.w400,color: Colors.white),)),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 20.0,bottom: 20),
+                child: Container(height: 1,width: 150,color: Colors.white,),
+              ),
+              Container(
+
+                child: GestureDetector(
+                    onTap: (){
+                      Navigator.push(context,
+                        MaterialPageRoute(builder:
+                            (context) =>
+                            DrawerScreen(place: Price_list_screen())),
+                      );
+                    },
+                    child: Text(Constant.pricelist_txt,style:TextStyle(fontSize: 16,fontFamily: 'Inter',fontWeight:FontWeight.w400,color: Colors.white),)),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 20.0,bottom: 20),

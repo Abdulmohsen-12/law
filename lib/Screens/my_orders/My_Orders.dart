@@ -16,7 +16,6 @@ class My_order_screen extends StatefulWidget {
 }
 
 class _My_order_screenState extends State<My_order_screen> {
-  final List<String> entries = <String>['Visa Card', 'Master Card', 'Knet'];
   List<Open> openList = [];
   List<Open> closedlist = [];
   bool statuscodeq=false;
@@ -45,7 +44,7 @@ class _My_order_screenState extends State<My_order_screen> {
         title: Stack(
           alignment: Alignment.center,
           children: [
-            Align(
+            Align  (
                 alignment: Alignment.centerLeft,
                 child: InkWell(
                   onTap: (){
