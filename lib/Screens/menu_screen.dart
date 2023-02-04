@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:law/Screens/common/about&faq.dart';
+import 'package:law/Screens/customer_support.dart';
 import 'package:law/Screens/drawer_screen.dart';
 import 'package:law/Screens/my_orders/My_Orders.dart';
 import 'common/orderdetails.dart';
@@ -104,7 +105,11 @@ class _MenuScreenState extends State<MenuScreen> {
 
                 child: GestureDetector(
                     onTap: (){
-
+                      Navigator.push(context,
+                        MaterialPageRoute(builder:
+                            (context) =>
+                            DrawerScreen(place: Customer_support_Screen())),
+                      );
                     },
                     child: Text(Constant.Customer_Support_txt,style:TextStyle(fontSize: 16,fontFamily: 'Inter',fontWeight:FontWeight.w400,color: Colors.white),)),
               ),

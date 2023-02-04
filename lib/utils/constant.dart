@@ -146,6 +146,11 @@ abstract class Constant{
   //faqs
   static const FAqs_txt = "FAQs";
 
+  //customer support
+  static const Customersprt_txt = "Customer Support";
+  static const helpingtxt = "how can I help you?";
+
+
 
 
 

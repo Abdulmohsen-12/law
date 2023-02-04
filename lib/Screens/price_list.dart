@@ -197,7 +197,9 @@ class _Price_list_screenState extends State<Price_list_screen> {
                 ),
               ),
               Expanded(
-                child: stscode?ListView.builder(
+                child: stscode?
+                ListView.builder(
+
 
                     itemCount: iscorporatedclick?corporateList.length:individuallist.length,
                     itemBuilder: (BuildContext context, int index){
