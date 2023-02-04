@@ -9,12 +9,12 @@ import 'package:law/utils/Views.dart';
 import 'package:law/utils/constant.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 
-import '../api/responses/casedetails_response.dart';
-import '../api/services/api_service.dart';
-import 'Contract_draft/contract_drafting.dart';
-import 'Contract_draft/extraservice.dart';
-import 'drawer_screen.dart';
-import 'home.dart';
+import '../../api/responses/casedetails_response.dart';
+import '../../api/services/api_service.dart';
+import '../Contract_draft/contract_drafting.dart';
+import '../Contract_draft/extraservice.dart';
+import '../drawer_screen.dart';
+import '../home.dart';
 
 class Orderdetails extends StatefulWidget {
   final int Order_Id;

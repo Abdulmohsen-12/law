@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:law/Screens/Contract_draft/upload.dart';
-import 'package:law/Screens/orderdetails.dart';
+import '../common/orderdetails.dart';
 
 import '../../../api/requests/contractdraft_request.dart';
 import '../../../api/responses/Cntrct_draft.dart';

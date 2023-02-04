@@ -8,7 +8,7 @@ import '../../api/responses/errror_respom.dart';
 import '../../api/responses/my_orders_response.dart';
 import '../../api/services/api_service.dart';
 import '../../utils/constant.dart';
-import '../orderdetails.dart';
+import '../common/orderdetails.dart';
 
 class My_order_screen extends StatefulWidget {
   @override
@@ -293,7 +293,6 @@ class _My_order_screenState extends State<My_order_screen> {
     errorcodeFromJson(_responseBody);
     print(codeResponse.statusCode);
     if(codeResponse.statusCode==200){
-      APIService.checkAndShowCircularDialog(context, true);
 
       setState(() {
         statuscodeq=true;

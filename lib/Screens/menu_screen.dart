@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:law/Screens/common/about&faq.dart';
 import 'package:law/Screens/drawer_screen.dart';
-import 'package:law/Screens/orderdetails.dart';
+import 'package:law/Screens/my_orders/My_Orders.dart';
+import 'common/orderdetails.dart';
 import 'package:law/Screens/price_list.dart';
 import 'package:law/Screens/profile/myprofile.dart';
 import 'package:law/utils/constant.dart';
@@ -55,11 +57,29 @@ class _MenuScreenState extends State<MenuScreen> {
                       Navigator.push(context,
                         MaterialPageRoute(builder:
                             (context) =>
+                            DrawerScreen(place: About_screen(about_status: 0,))),
+                      );
+                    },
+                    child: Text(Constant.Aboutus_txt,style:TextStyle(fontSize: 16,fontFamily: 'Inter',fontWeight:FontWeight.w400,color: Colors.white),)),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 20.0,bottom: 20),
+                child: Container(height: 1,width: 150,color: Colors.white,),
+              ),
+
+              Container(
+
+                child: GestureDetector(
+                    onTap: (){
+                      Navigator.push(context,
+                        MaterialPageRoute(builder:
+                            (context) =>
                             DrawerScreen(place: chalander_screen())),
                       );
                     },
                     child: Text(Constant.Schedule_txt,style:TextStyle(fontSize: 16,fontFamily: 'Inter',fontWeight:FontWeight.w400,color: Colors.white),)),
               ),
+
               Padding(
                 padding: const EdgeInsets.only(top: 20.0,bottom: 20),
                 child: Container(height: 1,width: 150,color: Colors.white,),
@@ -71,7 +91,7 @@ class _MenuScreenState extends State<MenuScreen> {
                       Navigator.push(context,
                         MaterialPageRoute(builder:
                             (context) =>
-                            DrawerScreen(place: Profile_screen())),
+                            DrawerScreen(place: My_order_screen())),
                       );
                     },
                     child: Text(Constant.Orders_txt,style:TextStyle(fontSize: 16,fontFamily: 'Inter',fontWeight:FontWeight.w400,color: Colors.white),)),
@@ -112,7 +132,11 @@ class _MenuScreenState extends State<MenuScreen> {
 
                 child: GestureDetector(
                     onTap: (){
-
+                      Navigator.push(context,
+                        MaterialPageRoute(builder:
+                            (context) =>
+                            DrawerScreen(place: About_screen(about_status: 1,))),
+                      );
                     },
                     child: Text(Constant.FAQs_txt,style:TextStyle(fontSize: 16,fontFamily: 'Inter',fontWeight:FontWeight.w400,color: Colors.white),)),
               ),

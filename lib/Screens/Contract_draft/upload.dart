@@ -11,7 +11,7 @@ import '../../utils/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
-import '../orderdetails.dart';
+import '../common/orderdetails.dart';
 
 class Upload_dialog extends StatefulWidget {
   const Upload_dialog({

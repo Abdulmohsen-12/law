@@ -139,6 +139,15 @@ abstract class Constant{
   static const Corporate_txt = "individual";
 
 
+  //about us
+  static const Aboutus_txt = "About us";
+
+
+  //faqs
+  static const FAqs_txt = "FAQs";
+
+
+
 
 
 
@@ -152,6 +161,7 @@ class ApiRoute{
   static const  profile = "/api/common/myprofile";
   static const  update_profile = "user/update/profile";
   static const  price_list = "common/price/list";
+  static const  about_description = "/api/common/about/english/user";
 }
 
 class AppColors {
