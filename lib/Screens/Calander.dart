@@ -56,8 +56,10 @@ class _chalander_screenState extends State<chalander_screen> {
         body: Padding(
           padding: const EdgeInsets.only(left: 10,right: 10,bottom: 299),
           child: SfCalendar(
+            cellBorderColor: null,
             view: CalendarView.month,
             dataSource: MeetingDataSource(_getDataSource()),
+
             // by default the month appointment display mode set as Indicator, we can
             // change the display mode as appointment using the appointment display
             // mode property
@@ -75,7 +77,7 @@ List<Meeting> _getDataSource() {
   final DateTime startTime = DateTime(today.year, today.month, today.day, 9);
   final DateTime endTime = startTime.add(const Duration(hours: 2));
   meetings.add(Meeting(
-      'Conference', startTime, endTime, const Color(0xFF0F8644), false));
+      'meeting', startTime, endTime, const Color(0xFF0F8644), false));
   return meetings;
 }
 

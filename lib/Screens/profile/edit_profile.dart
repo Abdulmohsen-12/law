@@ -5,10 +5,12 @@ import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:law/Screens/drawer_screen.dart';
 import 'package:law/utils/Views.dart';
 
+import '../../api/responses/errror_respom.dart';
 import '../../api/services/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../utils/constant.dart';
+import 'myprofile.dart';
 
 class Edit_profile_screen extends StatefulWidget {
   final List<String> profile_values;
@@ -329,16 +331,16 @@ class _Edit_profile_screenState extends State<Edit_profile_screen> {
                           decoration:   InputDecoration(
                             suffixIcon:
                             PopupMenuButton(
-                              icon: Icon(Icons.more_vert),
+                              icon: Image.asset("assets/icons/arrow_down.png",scale: 1.7,),
                               itemBuilder: (context) {
                                 return [
                                   PopupMenuItem(
                                     value: 'edit',
-                                    child: Text('Edit'),
+                                    child: Text('male'),
                                   ),
                                   PopupMenuItem(
                                     value: 'delete',
-                                    child: Text('Delete'),
+                                    child: Text('female'),
                                   )
                                 ];
                               },
@@ -592,7 +594,30 @@ class _Edit_profile_screenState extends State<Edit_profile_screen> {
                     edit_profile_clicked=true;
                   });
                 },
-                child: imgtxtbutton(btntext: "Save"),
+                child:    Container(
+                  width: MediaQuery.of(context).size.width,
+                  decoration: const BoxDecoration(
+                    image:DecorationImage(
+                      image: AssetImage(
+                          'assets/images/Contrctdraft_title_BG.png'),
+                      fit: BoxFit.fill,
+                    ),
+
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Save",style: TextStyle(fontFamily: 'Inter',color: Colors.white),),
+                      ],
+                    ),
+                  ),
+
+                ),
               ),
 
 
@@ -617,7 +642,7 @@ class _Edit_profile_screenState extends State<Edit_profile_screen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     print(prefs.getString("accesstoken"));
     String? token=prefs.getString("accesstoken");
-    var apiUrl = Uri.parse(APIService.BASE_URL+ ApiRoute.update_profile);
+    var apiUrl = Uri.parse(APIService.BASE_URL2+ ApiRoute.update_profile);
     print(apiUrl);
     var response = await http.post(apiUrl,
         body: {
@@ -631,7 +656,15 @@ class _Edit_profile_screenState extends State<Edit_profile_screen> {
 
 
     );
-
+    statuscode codeResponse =
+    errorcodeFromJson(response.body);
+    if(codeResponse.statusCode==204){
+      Navigator.pushReplacement(context,
+        MaterialPageRoute(builder:
+            (context) =>
+            DrawerScreen(place:Profile_screen())),
+      );
+    }
     print("this is response"+response.body);
 
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:law/Screens/common/about&faq.dart';
 import 'package:law/Screens/customer_support.dart';
 import 'package:law/Screens/drawer_screen.dart';
+import 'package:law/Screens/language.dart';
 import 'package:law/Screens/my_orders/My_Orders.dart';
 import 'common/orderdetails.dart';
 import 'package:law/Screens/price_list.dart';
@@ -153,7 +154,11 @@ class _MenuScreenState extends State<MenuScreen> {
 
                 child: GestureDetector(
                     onTap: (){
-
+                      Navigator.push(context,
+                        MaterialPageRoute(builder:
+                            (context) =>
+                            DrawerScreen(place: Language_screen())),
+                      );
                     },
                     child: Text(Constant.Language_txt,style:TextStyle(fontSize: 16,fontFamily: 'Inter',fontWeight:FontWeight.w400,color: Colors.white),)),
               ),

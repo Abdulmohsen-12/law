@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:law/Screens/drawer_screen.dart';
+import 'package:law/Screens/home.dart';
 import 'package:law/Screens/profile/edit_profile.dart';
 import 'package:law/api/responses/profile_response.dart';
 import 'package:law/api/services/api_service.dart';
@@ -48,7 +49,12 @@ class _Profile_screenState extends State<Profile_screen> {
                 alignment: Alignment.centerLeft,
                 child: InkWell(
                   onTap: (){
-                    Navigator.pop(context);
+                    //Navigator.pop(context);
+                    Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder:
+                          (context) =>
+                          DrawerScreen(place:Home_Screen())),
+                    );
 
                   },
                   child: Row(

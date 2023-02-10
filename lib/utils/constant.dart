@@ -151,6 +151,11 @@ abstract class Constant{
   static const helpingtxt = "how can I help you?";
 
 
+  //language
+  static const Languagetxt = "Language";
+
+
+
 
 
 

@@ -468,7 +468,9 @@ class _OrderdetailsState extends State<Orderdetails> {
                                                     });
 
                                                   },
-                                                  child: isradiolick?Container(
+                                                  child: isradiolick?
+                                                  Container(
+
                                                     height: 20,
                                                     width: 20,
                                                     decoration:  BoxDecoration(
@@ -486,7 +488,8 @@ class _OrderdetailsState extends State<Orderdetails> {
                                                     ),
                                                     child: Image.asset("assets/icons/checktik.png"),
 
-                                                  ):Container(
+                                                  ):
+                                                  Container(
                                                     height: 20,
                                                     width: 20,
 
