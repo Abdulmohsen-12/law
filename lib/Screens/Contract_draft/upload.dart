@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:law/Screens/Contract_draft/contract_drafting.dart';
 import 'package:law/Screens/drawer_screen.dart';
 import 'package:law/Screens/payment/payment.dart';
 
@@ -25,6 +26,7 @@ class Upload_dialog extends StatefulWidget {
 class _Upload_dialogState extends State<Upload_dialog> {
   late String filesname="";
     PlatformFile? file ;
+  late List<String?> filePaths;
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -78,7 +80,8 @@ class _Upload_dialogState extends State<Upload_dialog> {
                   children: [
                     GestureDetector(
                       onTap: (){
-                     filepick();
+                    // filepick();
+                        selectFile();
                       },
                       child: filesname.isEmpty? Container(
                         width: width,
@@ -334,7 +337,10 @@ class _Upload_dialogState extends State<Upload_dialog> {
                           Expanded(
                             child: GestureDetector(
                               onTap: (){
-                               // Navigator.of(context).pop();
+                              //  postFile(filePaths[0]!);
+                                Navigator.pop(context, filePaths);
+                             //   Navigator.push(context, new MaterialPageRoute(builder: (context) => new Contract_draft_Dialog(filePaths: filePaths[0]!,)));
+
                                // postdata(file??null);
                                // showDialog(context: context, builder:  (BuildContext context) => Thank_youDialog());
                               },
@@ -392,51 +398,23 @@ class _Upload_dialogState extends State<Upload_dialog> {
     );
 
   }
-
-  Future filepick() async{
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-
+  Future<void> selectFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.any,
+      allowMultiple: true
+    );
     if (result != null) {
-      PlatformFile file = result.files.first;
-      //postdata("","","","","","");
-      //
-      // print(file.name);
-      setState(()  {
-       filesname= file.name;
-       file=file;
 
-//     SharedPreferences prefs = await SharedPreferences.getInstance();
-//     print(prefs.getString("accesstoken"));
-//     String? token=prefs.getString("accesstoken");
-// String _responseBody = "";
-// var request =
-// http.MultipartRequest('POST', Uri.parse("https://istesheer.com/api/user/create/case"));
-// request.headers['Authorization']= 'Bearer $token';
-//        request.files.add(http.MultipartFile.fromBytes("pdf", File(file.path.toString()).readAsBytesSync(),filename: file.path));
-//        var res = await request.send();
+      setState(() {
+        filesname= result.files[0].name;
+        filePaths = result.paths;
 
       });
 
-      // print(file.bytes);
-      // print(file.size);
-      // print(file.extension);
-      // print(file.path);
-    } else {
-      // User canceled the picker
     }
 
   }
-  Future<void> postdata(PlatformFile file ) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    print(prefs.getString("accesstoken"));
-    String? token=prefs.getString("accesstoken");
-String _responseBody = "";
-var request =
-http.MultipartRequest('POST', Uri.parse("https://istesheer.com/api/user/create/case"));
-request.headers['Authorization']= 'Bearer $token';
-       request.files.add(http.MultipartFile.fromBytes("pdf", File(file.path.toString()).readAsBytesSync(),filename: file.path));
-       var res = await request.send();
-  }
+
 }
 
 class Thank_youDialog extends StatelessWidget {

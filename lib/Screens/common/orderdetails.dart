@@ -1,23 +1,28 @@
 
 
+import 'dart:io';
 import 'dart:math';
-
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:law/utils/Views.dart';
 import 'package:law/utils/constant.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
+import 'package:open_file/open_file.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../api/responses/casedetails_response.dart';
 import '../../api/services/api_service.dart';
 import '../Contract_draft/contract_drafting.dart';
 import '../Contract_draft/extraservice.dart';
 import '../drawer_screen.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import '../home.dart';
 
 class Orderdetails extends StatefulWidget {
-  final int Order_Id;
+  final String Order_Id;
   const Orderdetails({Key? key, required this.Order_Id}) : super(key: key);
 
   @override
@@ -48,6 +53,8 @@ class _OrderdetailsState extends State<Orderdetails> {
   String capacity2nd="";
   String floor_room="";
   String automated="";
+  String created="";
+  List<Attachment> attachmentlist = [];
 
 
   @override
@@ -187,7 +194,7 @@ class _OrderdetailsState extends State<Orderdetails> {
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.end,
                                         children: [
-                                          Text("10/09/2022 ",style: TextStyle(fontFamily:'Inter',color: Colors.black,fontWeight:FontWeight.w500 ),),
+                                          Text(created,style: TextStyle(fontFamily:'Inter',color: Colors.black,fontWeight:FontWeight.w500 ),),
 
                                         ],
                                       ),
@@ -348,7 +355,7 @@ class _OrderdetailsState extends State<Orderdetails> {
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(Service_name,style: TextStyle(fontFamily:'Inter',color: Colors.black,fontWeight:FontWeight.w500 ),),
-                                          Text("10/09/2022 ",style: TextStyle(fontFamily:'Inter',color: Colors.black,fontWeight:FontWeight.w500 ),),
+                                          Text(deadline,style: TextStyle(fontFamily:'Inter',color: Colors.black,fontWeight:FontWeight.w500 ),),
 
                                         ],
                                       ),
@@ -379,7 +386,7 @@ class _OrderdetailsState extends State<Orderdetails> {
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text("10/09/2022 ",style: TextStyle(fontFamily:'Inter',color: Colors.black,fontWeight:FontWeight.w500 ),),
+                                          Text(created,style: TextStyle(fontFamily:'Inter',color: Colors.black,fontWeight:FontWeight.w500 ),),
                                           Text(purpouse,style: TextStyle(fontFamily:'Inter',color: Colors.black,fontWeight:FontWeight.w500 ),),
 
                                         ],
@@ -435,181 +442,288 @@ class _OrderdetailsState extends State<Orderdetails> {
                                 ],
                               ),
                               SizedBox(height: 5,),
-                              Column(
-                                children: [
-                                  Column(
-                                    children: [
-                                      Container(
-                                        width: MediaQuery.of(context).size.width,
-                                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                                        decoration: const BoxDecoration(
-                                          border: Border(
-                                            top: BorderSide(color:Colors.black),
-                                            bottom: BorderSide(color:Colors.black),
-                                            left: BorderSide(color:Colors.black),
-                                            right: BorderSide(color:Colors.black),
-                                          ),
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(10),
-                                          ),
-                                        ),
+                              Container(
+                                height: 150,
+
+                                child: ListView.builder(
+
+                                    itemCount: attachmentlist.length,
+                                    itemBuilder:  (BuildContext context, int index){
+                                      print(attachmentlist);
+                                      return   GestureDetector(
+                                        onTap: (){
+                                       print("clicked on file");
+                                        },
                                         child: Padding(
-                                          padding: const EdgeInsets.all(12.0),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Visibility(
-                                                visible: false,
-                                                child: GestureDetector(
-                                                  onTap: (){
-                                                    setState(() {
-                                                      isradiolick=true;
-                                                      print(isradiolick);
-                                                    });
+                                          padding: const EdgeInsets.only(top: 5),
+                                          child: Container(
+                                            width: MediaQuery.of(context).size.width,
+                                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                                            decoration: const BoxDecoration(
+                                              border: Border(
+                                                top: BorderSide(color:Colors.black),
+                                                bottom: BorderSide(color:Colors.black),
+                                                left: BorderSide(color:Colors.black),
+                                                right: BorderSide(color:Colors.black),
+                                              ),
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(10),
+                                              ),
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(12.0),
+                                              child: GestureDetector(
+                                                onTap: (){
+                                                  setState(() {
+                                                    print("clicked");
 
-                                                  },
-                                                  child: isradiolick?
-                                                  Container(
+                                                    downloadFile(attachmentlist[index].link);
+                                                  });
+                                                },
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Visibility(
+                                                      visible: false,
+                                                      child: GestureDetector(
+                                                        onTap: (){
+                                                          setState(() {
+                                                            isradiolick=true;
+                                                            print(isradiolick);
+                                                          });
 
-                                                    height: 20,
-                                                    width: 20,
-                                                    decoration:  BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      color: Colors.red,
-                                                      border:Border.all(
-                                                          color:Colors.black,
-                                                          width:1
+                                                        },
+                                                        child: isradiolick?
+                                                        Container(
+
+                                                          height: 20,
+                                                          width: 20,
+                                                          decoration:  BoxDecoration(
+                                                            shape: BoxShape.circle,
+                                                            color: Colors.red,
+                                                            border:Border.all(
+                                                                color:Colors.black,
+                                                                width:1
+                                                            ),
+                                                            image: DecorationImage(
+                                                              image: AssetImage("assets/images/Contrctdraft_title_BG.png"),
+                                                              fit: BoxFit.cover,
+                                                            ),
+
+                                                          ),
+                                                          child: Image.asset("assets/icons/checktik.png"),
+
+                                                        ):
+                                                        Container(
+                                                          height: 20,
+                                                          width: 20,
+
+                                                          decoration:  BoxDecoration(
+                                                            shape: BoxShape.circle,
+                                                            border:Border.all(
+                                                                color:Colors.black,
+                                                                width:1
+                                                            ),
+
+                                                          ),
+                                                        ),
                                                       ),
-                                                      image: DecorationImage(
-                                                        image: AssetImage("assets/images/Contrctdraft_title_BG.png"),
-                                                        fit: BoxFit.cover,
-                                                      ),
-
                                                     ),
-                                                    child: Image.asset("assets/icons/checktik.png"),
+                                                    Text(attachmentlist[index].fileName),
+                                                    isradiolick?GestureDetector(
+                                                        onTap: (){
+                                                          setState(() {
+                                                            isdeletelick=true;
+                                                          });
+                                                        },
+                                                        child: Image.asset("assets/icons/delete.png",fit: BoxFit.fill,scale: 1.5,)):Container()
 
-                                                  ):
-                                                  Container(
-                                                    height: 20,
-                                                    width: 20,
 
-                                                    decoration:  BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      border:Border.all(
-                                                          color:Colors.black,
-                                                          width:1
-                                                      ),
-
-                                                    ),
-                                                  ),
+                                                  ],
                                                 ),
                                               ),
-                                              Text("Maps"),
-                                              isradiolick?GestureDetector(
-                                                  onTap: (){
-                                                    setState(() {
-                                                      isdeletelick=true;
-                                                    });
-                                                  },
-                                                  child: Image.asset("assets/icons/delete.png",fit: BoxFit.fill,scale: 1.5,)):Container()
+                                            ),
 
-
-                                            ],
                                           ),
                                         ),
-
-                                      ),
-                                      SizedBox(height: 5,),
-                                      Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(Constant.service_provide_txt,textAlign:TextAlign.left,style: TextStyle(fontFamily:'Inter',color: Colors.black,fontWeight:FontWeight.w500, ),)),
-                                      Container(
-                                        width: MediaQuery.of(context).size.width,
-                                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                                        decoration: const BoxDecoration(
-                                          border: Border(
-                                            top: BorderSide(color:Colors.black),
-                                            bottom: BorderSide(color:Colors.black),
-                                            left: BorderSide(color:Colors.black),
-                                            right: BorderSide(color:Colors.black),
-                                          ),
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(10),
-                                          ),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(12.0),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Visibility(
-                                                visible: false,
-                                                child: GestureDetector(
-                                                  onTap: (){
-                                                    setState(() {
-                                                      isradiolick=true;
-                                                      print(isradiolick);
-                                                    });
-
-                                                  },
-                                                  child:
-                                                  isradiolick?Container(
-                                                    height: 20,
-                                                    width: 20,
-
-                                                    decoration:  BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      color: Colors.red,
-                                                      border:Border.all(
-                                                          color:Colors.black,
-                                                          width:1
-                                                      ),
-                                                      image: DecorationImage(
-                                                        image: AssetImage("assets/images/Contrctdraft_title_BG.png"),
-                                                        fit: BoxFit.cover,
-                                                      ),
-
-                                                    ),
-                                                    child: Image.asset("assets/icons/checktik.png"),
-
-                                                  ):Container(
-                                                    height: 20,
-                                                    width: 20,
-
-                                                    decoration:  BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      border:Border.all(
-                                                          color:Colors.black,
-                                                          width:1
-                                                      ),
-
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              Text("Maps"),
-                                              isradiolick?GestureDetector(
-                                                  onTap: (){
-                                                    setState(() {
-                                                      isdeletelick=true;
-                                                    });
-                                                  },
-                                                  child: Image.asset("assets/icons/delete.png",fit: BoxFit.fill,scale: 1.5,)):Container()
-
-
-                                            ],
-                                          ),
-                                        ),
-
-                                      ),
-                                      SizedBox(height: 5,),
-                                      Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(Constant.service_provide_txt,textAlign:TextAlign.left,style: TextStyle(fontFamily:'Inter',color: Colors.black,fontWeight:FontWeight.w500, ),)),
-                                    ],
-                                  ),
-                                ],
+                                      );
+                                    }),
                               ),
+                              // Column(
+                              //   children: [
+                              //     Column(
+                              //       children: [
+                              //         Container(
+                              //           width: MediaQuery.of(context).size.width,
+                              //           padding: const EdgeInsets.symmetric(horizontal: 8),
+                              //           decoration: const BoxDecoration(
+                              //             border: Border(
+                              //               top: BorderSide(color:Colors.black),
+                              //               bottom: BorderSide(color:Colors.black),
+                              //               left: BorderSide(color:Colors.black),
+                              //               right: BorderSide(color:Colors.black),
+                              //             ),
+                              //             borderRadius: BorderRadius.all(
+                              //               Radius.circular(10),
+                              //             ),
+                              //           ),
+                              //           child: Padding(
+                              //             padding: const EdgeInsets.all(12.0),
+                              //             child: Row(
+                              //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              //               children: [
+                              //                 Visibility(
+                              //                   visible: false,
+                              //                   child: GestureDetector(
+                              //                     onTap: (){
+                              //                       setState(() {
+                              //                         isradiolick=true;
+                              //                         print(isradiolick);
+                              //                       });
+                              //
+                              //                     },
+                              //                     child: isradiolick?
+                              //                     Container(
+                              //
+                              //                       height: 20,
+                              //                       width: 20,
+                              //                       decoration:  BoxDecoration(
+                              //                         shape: BoxShape.circle,
+                              //                         color: Colors.red,
+                              //                         border:Border.all(
+                              //                             color:Colors.black,
+                              //                             width:1
+                              //                         ),
+                              //                         image: DecorationImage(
+                              //                           image: AssetImage("assets/images/Contrctdraft_title_BG.png"),
+                              //                           fit: BoxFit.cover,
+                              //                         ),
+                              //
+                              //                       ),
+                              //                       child: Image.asset("assets/icons/checktik.png"),
+                              //
+                              //                     ):
+                              //                     Container(
+                              //                       height: 20,
+                              //                       width: 20,
+                              //
+                              //                       decoration:  BoxDecoration(
+                              //                         shape: BoxShape.circle,
+                              //                         border:Border.all(
+                              //                             color:Colors.black,
+                              //                             width:1
+                              //                         ),
+                              //
+                              //                       ),
+                              //                     ),
+                              //                   ),
+                              //                 ),
+                              //                 Text("Maps"),
+                              //                 isradiolick?GestureDetector(
+                              //                     onTap: (){
+                              //                       setState(() {
+                              //                         isdeletelick=true;
+                              //                       });
+                              //                     },
+                              //                     child: Image.asset("assets/icons/delete.png",fit: BoxFit.fill,scale: 1.5,)):Container()
+                              //
+                              //
+                              //               ],
+                              //             ),
+                              //           ),
+                              //
+                              //         ),
+                              //         SizedBox(height: 5,),
+                              //         Align(
+                              //             alignment: Alignment.centerLeft,
+                              //             child: Text(Constant.service_provide_txt,textAlign:TextAlign.left,style: TextStyle(fontFamily:'Inter',color: Colors.black,fontWeight:FontWeight.w500, ),)),
+                              //         Container(
+                              //           width: MediaQuery.of(context).size.width,
+                              //           padding: const EdgeInsets.symmetric(horizontal: 8),
+                              //           decoration: const BoxDecoration(
+                              //             border: Border(
+                              //               top: BorderSide(color:Colors.black),
+                              //               bottom: BorderSide(color:Colors.black),
+                              //               left: BorderSide(color:Colors.black),
+                              //               right: BorderSide(color:Colors.black),
+                              //             ),
+                              //             borderRadius: BorderRadius.all(
+                              //               Radius.circular(10),
+                              //             ),
+                              //           ),
+                              //           child: Padding(
+                              //             padding: const EdgeInsets.all(12.0),
+                              //             child: Row(
+                              //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              //               children: [
+                              //                 Visibility(
+                              //                   visible: false,
+                              //                   child: GestureDetector(
+                              //                     onTap: (){
+                              //                       setState(() {
+                              //                         isradiolick=true;
+                              //                         print(isradiolick);
+                              //                       });
+                              //
+                              //                     },
+                              //                     child:
+                              //                     isradiolick?Container(
+                              //                       height: 20,
+                              //                       width: 20,
+                              //
+                              //                       decoration:  BoxDecoration(
+                              //                         shape: BoxShape.circle,
+                              //                         color: Colors.red,
+                              //                         border:Border.all(
+                              //                             color:Colors.black,
+                              //                             width:1
+                              //                         ),
+                              //                         image: DecorationImage(
+                              //                           image: AssetImage("assets/images/Contrctdraft_title_BG.png"),
+                              //                           fit: BoxFit.cover,
+                              //                         ),
+                              //
+                              //                       ),
+                              //                       child: Image.asset("assets/icons/checktik.png"),
+                              //
+                              //                     ):Container(
+                              //                       height: 20,
+                              //                       width: 20,
+                              //
+                              //                       decoration:  BoxDecoration(
+                              //                         shape: BoxShape.circle,
+                              //                         border:Border.all(
+                              //                             color:Colors.black,
+                              //                             width:1
+                              //                         ),
+                              //
+                              //                       ),
+                              //                     ),
+                              //                   ),
+                              //                 ),
+                              //                 Text("Maps"),
+                              //                 isradiolick?GestureDetector(
+                              //                     onTap: (){
+                              //                       setState(() {
+                              //                         isdeletelick=true;
+                              //                       });
+                              //                     },
+                              //                     child: Image.asset("assets/icons/delete.png",fit: BoxFit.fill,scale: 1.5,)):Container()
+                              //
+                              //
+                              //               ],
+                              //             ),
+                              //           ),
+                              //
+                              //         ),
+                              //         SizedBox(height: 5,),
+                              //         Align(
+                              //             alignment: Alignment.centerLeft,
+                              //             child: Text(Constant.service_provide_txt,textAlign:TextAlign.left,style: TextStyle(fontFamily:'Inter',color: Colors.black,fontWeight:FontWeight.w500, ),)),
+                              //       ],
+                              //     ),
+                              //   ],
+                              // ),
                               Container(
                                 width: MediaQuery.of(context).size.width,
                                 decoration: const BoxDecoration(
@@ -924,7 +1038,7 @@ class _OrderdetailsState extends State<Orderdetails> {
     print(_responseBody);
     CaseDetailsResponse casedetials_response = caseDetailsResponseFromJson(_responseBody);
     if(casedetials_response.statusCode==200) {
-      APIService.checkAndShowCircularDialog(context, true);
+     // APIService.checkAndShowCircularDialog(context, true);
 
       setState(() {
         // print("responses"+casedetials_response.data.clientName);
@@ -944,6 +1058,9 @@ class _OrderdetailsState extends State<Orderdetails> {
         }
         if (casedetials_response.data.deadline != null) {
           deadline = casedetials_response.data.deadline.toString();
+          DateTime d = DateTime.parse(deadline);
+          deadline=d.day.toString()+"/"+d.month.toString()+"/"+d.year.toString();
+
         }
         if (casedetials_response.data.courtLocation != null) {
           court_location = casedetials_response.data.courtLocation;
@@ -963,11 +1080,50 @@ class _OrderdetailsState extends State<Orderdetails> {
 
         case_status = casedetials_response.data.caseStatus;
         Order = casedetials_response.data.orderNo;
+        DateTime p = DateTime.parse(casedetials_response.data.createTime.toString());
+        created=p.day.toString()+"/"+p.month.toString()+"/"+p.year.toString();
+        print(created);
+        for (final item in  casedetials_response.data.attachments){
+          attachmentlist.add(item);
+          print( casedetials_response.data.attachments.length);
+
+
+        }
       });
     }
 
     print("responses"+clientsname);
 
+  }
+  Future<void> downloadFile(String fileUrl) async {
+    print("before downloading 0"+fileUrl);
+    final response = await http.get(Uri.parse(fileUrl));
+    print("before downloading 1"+response.toString());
+    final documentDirectory = await getApplicationDocumentsDirectory();
+    final filePath = '${documentDirectory.path}/file.pdf';
+    print("before downloading 2"+filePath.toString());
+    final file = File(filePath);
+    print("before downloading 3"+file.toString());
+    // final url = file.path;
+    // if (await canLaunch(url)) {
+    //   await launch(url);
+    // } else {
+    //   throw 'Could not launch $url';
+    // // }
+    // final status = await Permission.storage.request();
+    // if (status.isGranted) {
+    //   print("permitterd");
+    //   // Permission granted, try to open the file
+    // } else {
+    //   print("no permitterd");
+    //   // Permission denied, handle the error
+    // }
+
+
+   await file.writeAsBytes(response.bodyBytes);
+
+// Open the PDF file
+    await OpenFile.open(filePath );
   }
   void actionPopUpItemSelected(String value, String name) {
     String message;

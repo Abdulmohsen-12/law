@@ -1,5 +1,8 @@
 
 
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:law/Screens/Contract_draft/upload.dart';
 import '../common/orderdetails.dart';
@@ -13,6 +16,7 @@ import '../../api/services/api_service.dart';
 import '../../utils/constant.dart';
 import '../drawer_screen.dart';
 import 'package:http/http.dart' as http;
+
 import 'package:audio_waveforms/audio_waveforms.dart';
 
 import 'dart:convert';
@@ -21,11 +25,13 @@ import 'dart:developer';
 
 class Contract_draft_Dialog extends StatefulWidget {
   bool? update;
-  int? caseID;
+  String? caseID;
+   String? filePaths;
    Contract_draft_Dialog({
     Key? key,
     this.update,
-     this.caseID
+     this.caseID,
+     this.filePaths
   }) : super(key: key);
 
   @override
@@ -33,7 +39,8 @@ class Contract_draft_Dialog extends StatefulWidget {
 }
 
 class _Contract_draft_DialogState extends State<Contract_draft_Dialog> {
-
+  late  List<String?> result=[];
+  String? audioPath;
   final TextEditingController _Clientname_editing_C = TextEditingController();
   final TextEditingController _purpose_editing_C = TextEditingController();
   final TextEditingController _C_term_editing_C = TextEditingController();
@@ -52,9 +59,9 @@ class _Contract_draft_DialogState extends State<Contract_draft_Dialog> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    widget.update= false;
-    if(widget.update=true){
-      get(widget.caseID?.toInt() ?? 0);
+    if(widget.update == true){
+      APIService.checkAndShowCircularDialog(context, true);
+      get(widget.caseID.toString());
     }
     _initialiseController();
   }
@@ -64,10 +71,13 @@ class _Contract_draft_DialogState extends State<Contract_draft_Dialog> {
      print(recordcontroller.recorderState.isRecording);
      if(recordcontroller.recorderState.isRecording){
 
-       final path = await  recordcontroller.stop();
+       final audio_path = await  recordcontroller.stop();
        recordcontroller.pause();
+       setState(() {
+     audioPath=audio_path;
+       });
        //allfile.add();
-       print(path);
+
        // completePath = await _completePath(directoryPath);
        // getdataas(path);
      }
@@ -80,7 +90,7 @@ class _Contract_draft_DialogState extends State<Contract_draft_Dialog> {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
 
-    _details_editing_C.text="I need a Construction Agreement..";
+
     return WillPopScope(
       onWillPop: () {return Future.value(false);},
       child: AlertDialog(
@@ -393,7 +403,8 @@ class _Contract_draft_DialogState extends State<Contract_draft_Dialog> {
                       SizedBox(height: 8,),
                       GestureDetector(
                         onTap: (){
-                          showDialog(context: context, builder:  (BuildContext context) => Upload_dialog());
+                        //  showDialog(context: context, builder:  (BuildContext context) => Upload_dialog());
+                          uploadfunc();
 
                         },
                         child: Container(
@@ -462,21 +473,7 @@ class _Contract_draft_DialogState extends State<Contract_draft_Dialog> {
                             Expanded(
                               child: GestureDetector(
                                 onTap: (){
-                                  print(widget.update= true);
-                                  if(widget.update =false){
-                                    postdata(_Clientname_editing_C.text,_purpose_editing_C.text,_C_term_editing_C.text,_Amount_editing_C.text,_Deadline_editing_C.text,_details_editing_C.text);
-                                  }else{
-                                    var casid = widget.caseID?.toInt() ?? 0;
-                                    print(casid);
-
-                                    updatedata(_Clientname_editing_C.text,_purpose_editing_C.text,_C_term_editing_C.text,_Amount_editing_C.text,_details_editing_C.text,_Deadline_editing_C.text,casid);
-
-                                  }
-
-
-                                  //get(18);
-
-
+                                  postdata(_Clientname_editing_C.text,_purpose_editing_C.text,_C_term_editing_C.text,_Amount_editing_C.text,_details_editing_C.text,_Deadline_editing_C.text,result,audioPath);
                                 },
                                 child: Container(
                                   height: MediaQuery.of(context).size.height*.05,
@@ -532,114 +529,92 @@ class _Contract_draft_DialogState extends State<Contract_draft_Dialog> {
       ),
     );
   }
+  Future<void>uploadfunc() async{
+     result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const Upload_dialog()),
+    );
+     print("after getting result"+result.toString());
 
-  Future<void> postdata(String ServiceName,String Purpose,String ContractTerm,String Ammount,String Details,StringDeadline ) async {
-    print("servicenamee"+ServiceName);
+
+  }
+  Future<void> postdata(String ServiceName,String Purpose,String ContractTerm,String Ammount,String Details,StringDeadline, List<String?> filePath,String? audioPath ) async {
+    print("servicenamee"+filePath.toString());
+    print("servicenamee"+StringDeadline);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     print(prefs.getString("accesstoken"));
     String? token=prefs.getString("accesstoken");
-    var apiUrl = Uri.parse(APIService.BASE_URL2+ ApiRoute.createcase);
-    var response = await http.post(apiUrl,
-      body: {
-        'ServiceName': "Contract Drafting",
-        'ClientName': ServiceName,
-        'Purpose': Purpose,
-        'Details': Details,
-        'Deadline': StringDeadline,
-        'ContractTerm': ContractTerm,
-      },
-      headers: {
-        'Authorization': 'Bearer $token',
+    var apiUrl = null;
+    if(widget.update == true){
+       apiUrl = Uri.parse(APIService.BASE_URL2+ ApiRoute.case_updates+widget.caseID.toString());
+    }else{
+       apiUrl = Uri.parse(APIService.BASE_URL2+ ApiRoute.createcase);
+    }
+
+
+    var request = http.MultipartRequest('POST', apiUrl);
+
+// add fields to the request
+    request.fields['ServiceName'] = "Contract Drafting";
+    request.fields['ClientName'] = ServiceName;
+    request.fields['Purpose'] = Purpose;
+    request.fields['Ammount'] = Ammount;
+    request.fields['Details'] = Details;
+    request.fields['Deadline'] = StringDeadline;
+    request.fields['ContractTerm'] = ContractTerm;
+
+// add files to the request
+    for (var file_pat  in filePath){
+      print("the paths"+file_pat!);
+      var file = await http.MultipartFile.fromPath("case_files[]", file_pat);
+      request.files.add(file);
+
+    }
+    request.headers['Authorization'] = 'Bearer $token';
+
+// send the request
+    var response = await request.send();
+    print(response.toString()) ;
+
+    if (response.statusCode == 200) {
+      var responseBodyString = await response.stream.bytesToString();
+      print(responseBodyString);
+      if(widget.update==false){
+        var codeResponse = contractdraftFromJson(responseBodyString);
+
+        if(codeResponse.statusCode==200){
+          Navigator.pushReplacement(context,
+            MaterialPageRoute(builder:
+                (context) =>
+                DrawerScreen(place: Orderdetails(Order_Id: codeResponse.data.caseId))),
+          );
+        }
+      }else{
+        Navigator.pop(context);
+        Navigator.pushReplacement(context,
+          MaterialPageRoute(builder:
+              (context) =>
+              DrawerScreen(place: Orderdetails(Order_Id: widget.caseID.toString()))),
+        );
       }
 
 
-    );
-
-    print("this is response"+response.body);
-
-
-   // String _responseBody = await APIService.postApi(
-   //      data:postdraft.toJson(),
-   //      Route: ApiRoute.createcase,
-   //      context: context,
-   //      show_CircularDialog: false);
-
-    Contractdraft codeResponse = contractdraftFromJson(response.body);
-    print(codeResponse.data.caseId);
-    if(codeResponse.statusCode==200){
-      // Contractdraft succeededResponse =
-      // contractdraftFromJson(_responseBody);
-      // print(succeededResponse.data.caseId);
-      Navigator.pushReplacement(context,
-        MaterialPageRoute(builder:
-            (context) =>
-            DrawerScreen(place: Orderdetails(Order_Id: codeResponse.data.caseId))),
-      );
-    }else{
-
     }
-
   }
-  Future<void> updatedata(String ServiceName,String Purpose,String ContractTerm,String Ammount,String Details,StringDeadline,int caseid ) async {
-    print("servicenamee"+ServiceName);
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    print(prefs.getString("accesstoken"));
-    String? token=prefs.getString("accesstoken");
-    var apiUrl = Uri.parse(APIService.BASE_URL2+ ApiRoute.case_updates+caseid.toString());
-    var response = await http.post(apiUrl,
-        body: {
-          'ServiceName': "Contract Drafting",
-          'ClientName': ServiceName,
-          'Purpose': Purpose,
-          'Details': Details,
-          'Deadline': StringDeadline,
-          'ContractTerm': ContractTerm,
-        },
-        headers: {
-          'Authorization': 'Bearer $token',
-        }
-
-
-    );
-
-    print("this is response"+response.body);
-
-
-    // String _responseBody = await APIService.postApi(
-    //      data:postdraft.toJson(),
-    //      Route: ApiRoute.createcase,
-    //      context: context,
-    //      show_CircularDialog: false);
-
-    Contractdraft codeResponse = contractdraftFromJson(response.body);
-    print(codeResponse.data.caseId);
-    if(codeResponse.statusCode==200){
-      // Contractdraft succeededResponse =
-      // contractdraftFromJson(_responseBody);
-      // print(succeededResponse.data.caseId);
-      // Navigator.pushReplacement(context,
-      //   MaterialPageRoute(builder:
-      //       (context) =>
-      //       DrawerScreen(place: Orderdetails(Order_Id: codeResponse.data.caseId))),
-      // );
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (BuildContext context) => super.widget));
-    }else{
-
-    }
-
-  }
-  Future<void> get(int caseID ) async {
+  Future<void> get(String caseID ) async {
     String _responseBody = await APIService.getdataa(data: caseID,   Route: ApiRoute.case_details,
         context: context,
-        show_CircularDialog: true);
+        show_CircularDialog: false);
     print(_responseBody);
     CaseDetailsResponse casedetials_response = caseDetailsResponseFromJson(_responseBody.toString());
     if(casedetials_response.statusCode ==200){
       setState(() {
         _Clientname_editing_C.text=casedetials_response.data.clientName!;
+        _purpose_editing_C.text=casedetials_response.data.purpouse!;
+        _C_term_editing_C.text=casedetials_response.data.contractTerm!;
+        _Amount_editing_C.text=casedetials_response.data.contractAmmount!;
+        _Deadline_editing_C.text=casedetials_response.data.deadline!;
+        _details_editing_C.text=casedetials_response.data.details!;
       });
     }
 

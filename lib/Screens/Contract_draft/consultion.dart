@@ -510,7 +510,7 @@ class _Consultion_DialogState extends State<Consultion_Dialog> {
     //      show_CircularDialog: false);
 
     Contractdraft codeResponse = contractdraftFromJson(response.body);
-    print(codeResponse.data.caseId);
+    print(codeResponse.statusCode);
     if(codeResponse.statusCode==200){
       // Contractdraft succeededResponse =
       // contractdraftFromJson(_responseBody);

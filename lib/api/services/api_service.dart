@@ -20,9 +20,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class APIService {
-  static const String AUTH_BASE_URL = "https://istesheer.com/api/auth/";
-  static const String BASE_URL = "istesheer.com";
-  static const String BASE_URL2 = "https://istesheer.com/api/";
+  static const String AUTH_BASE_URL = "https://api.istesheer.com/api/auth/";
+  static const String BASE_URL = "api.istesheer.com";
+  static const String BASE_URL2 = "https://api.istesheer.com/api/";
   static bool showDialogue = false;
 
   static Future<String> postApi(
