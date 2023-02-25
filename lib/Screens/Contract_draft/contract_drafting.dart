@@ -5,6 +5,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:law/Screens/Contract_draft/upload.dart';
+import '../../api/responses/error_response.dart';
+import '../../utils/Utility.dart';
 import '../common/orderdetails.dart';
 
 import '../../api/requests/contractdraft_request.dart';
@@ -251,16 +253,16 @@ class _Contract_draft_DialogState extends State<Contract_draft_Dialog> {
                           ),
                         ),
 
-                        // validator: (value) {
-                        //   if(value == null || value.isEmpty) {
-                        //     return AppLocalizations.of(context)!.required;
-                        //   } else if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                        //       .hasMatch(value)) {
-                        //     return AppLocalizations.of(context)!.enterValidEmail;
-                        //   } else {
-                        //     return null;
-                        //   }
-                        // },
+                        validator: (value) {
+                          if(value == null || value.isEmpty) {
+                            return "please input";
+                          } else if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                              .hasMatch(value)) {
+                            return "valid";
+                          } else {
+                            return null;
+                          }
+                        },
                         // autovalidateMode: AutovalidateMode.always,
                       ),
                       const SizedBox(height: 8,),
@@ -579,24 +581,37 @@ class _Contract_draft_DialogState extends State<Contract_draft_Dialog> {
     if (response.statusCode == 200) {
       var responseBodyString = await response.stream.bytesToString();
       print(responseBodyString);
-      if(widget.update==false){
-        var codeResponse = contractdraftFromJson(responseBodyString);
 
-        if(codeResponse.statusCode==200){
-          Navigator.pushReplacement(context,
-            MaterialPageRoute(builder:
-                (context) =>
-                DrawerScreen(place: Orderdetails(Order_Id: codeResponse.data.caseId))),
-          );
-        }
-      }else{
+      if(widget.update == true){
         Navigator.pop(context);
         Navigator.pushReplacement(context,
           MaterialPageRoute(builder:
               (context) =>
               DrawerScreen(place: Orderdetails(Order_Id: widget.caseID.toString()))),
         );
+      }else{
+        if(_Clientname_editing_C.text!="" && _purpose_editing_C.text !="" &&
+            _Deadline_editing_C.text != "" && _C_term_editing_C.text !=""&& _Amount_editing_C.text !="") {
+          var codeResponse = contractdraftFromJson(responseBodyString);
+          if (codeResponse.statusCode == 200) {
+            Navigator.pushReplacement(context,
+              MaterialPageRoute(builder:
+                  (context) =>
+                  DrawerScreen(
+                      place: Orderdetails(Order_Id: codeResponse.data.caseId))),
+            );
+          }
+        }else{
+
+      Error succeededResponse =
+      errorFromJson(responseBodyString);
+      print("responsees"+succeededResponse.toString());
+
+      Utility.show_Dialog(context, "failed",succeededResponse.error );
+
+        }
       }
+
 
 
     }
