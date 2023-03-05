@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
-import 'package:law/Screens/Contract_draft/upload.dart';
+import 'package:law/Screens/input_section/upload.dart';
+import '../../api/responses/error_response.dart';
+import '../../utils/Utility.dart';
 import '../common/orderdetails.dart';
 
 import '../../../api/requests/contractdraft_request.dart';
@@ -21,7 +23,11 @@ import '../drawer_screen.dart';
 
 
 class Lawsuit_Dialog extends StatefulWidget {
-  const Lawsuit_Dialog({
+  bool? update;
+  String? caseID;
+   Lawsuit_Dialog({
+     this.update,
+     this.caseID,
     Key? key,
   }) : super(key: key);
 
@@ -30,7 +36,7 @@ class Lawsuit_Dialog extends StatefulWidget {
 }
 
 class _Lawsuit_DialogState extends State<Lawsuit_Dialog> {
-
+  late  List<String?> result=[];
   final TextEditingController _Clientname_editing_C = TextEditingController();
   final TextEditingController _Capacity_editing_C = TextEditingController();
   final TextEditingController _2ndCapacity_editing_C = TextEditingController();
@@ -42,8 +48,6 @@ class _Lawsuit_DialogState extends State<Lawsuit_Dialog> {
   final TextEditingController _Expert_editing_C = TextEditingController();
   final TextEditingController _CaseNo_editing_C = TextEditingController();
   final TextEditingController _WriteDetails_editing_C = TextEditingController();
-  final TextEditingController _subject_editing_C = TextEditingController();
-  final TextEditingController _todays_date_editing_C = TextEditingController();
   final TextEditingController _Deadline_editing_C = TextEditingController();
   final TextEditingController _details_editing_C = TextEditingController();
   RecorderController recordcontroller = RecorderController();
@@ -59,6 +63,10 @@ class _Lawsuit_DialogState extends State<Lawsuit_Dialog> {
     // TODO: implement initState
     super.initState();
     _initialiseController();
+    if(widget.update == true){
+      APIService.checkAndShowCircularDialog(context, true);
+      get(widget.caseID.toString());
+    }
   }
 
   void startrecord() async {
@@ -274,7 +282,7 @@ class _Lawsuit_DialogState extends State<Lawsuit_Dialog> {
                               child: GestureDetector(
                                 onTap: (){
                                   postdata(_Clientname_editing_C.text,_Agaist_editing_C.text,_Capacity_editing_C.text,_2ndCapacity_editing_C.text,_details_editing_C.text,_Courtlocation_editing_C.text,"",_Floor_Room_editing_C.text,_Chamber_editing_C.text
-                                  ,_Automated_editing_C.text,_Expert_editing_C.text,_CaseNo_editing_C.text);
+                                  ,_Automated_editing_C.text,_Expert_editing_C.text,_CaseNo_editing_C.text,result);
                                   // Navigator.pushReplacement(context,
                                   //   MaterialPageRoute(builder:
                                   //       (context) =>
@@ -338,67 +346,115 @@ class _Lawsuit_DialogState extends State<Lawsuit_Dialog> {
       ),
     );
   }
-  Future<void> postdata(String ServiceName,String Against,String Capacity,String CapacitSecond,String Details,String Location,String DocumentDetails,String Room, String Chamber,String AutomatedNumber,String ExpertLocation,String CaseNumber ) async {
+  Future<void>uploadfunc() async{
+    result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const Upload_dialog()),
+    );
+    print("after getting result"+result.toString());
+
+
+  }
+  Future<void> postdata(String ServiceName,String Against,String Capacity,String CapacitSecond,String Details,String Location,String DocumentDetails,String Room, String Chamber,String AutomatedNumber,String ExpertLocation,String CaseNumber,List<String?> filePath ) async {
     print("servicenamee"+ServiceName);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     print(prefs.getString("accesstoken"));
     String? token=prefs.getString("accesstoken");
-    var apiUrl = Uri.parse(APIService.BASE_URL2+ ApiRoute.createcase);
-    var response = await http.post(apiUrl,
-        body: {
-          'ServiceName': "case-lawsuit",
-          'ClientName': ServiceName,
-          'against': Against,
-          'Capacity': Capacity,
-          'CapacitSecond': CapacitSecond,
-          'Details': Details,
-          'Location': Location,
-          'DocumentDetails': DocumentDetails,
-          'Room': Room,
-          'Chamber': Chamber,
-          'AutomatedNumber': AutomatedNumber,
-          'ExpertLocation': ExpertLocation,
-          'CaseNumber': CaseNumber,
-
-        },
-        headers: {
-          'Authorization': 'Bearer $token',
-        }
-
-
-    );
-
-    print("this is response"+response.body);
-
-
-    // String _responseBody = await APIService.postApi(
-    //      data:postdraft.toJson(),
-    //      Route: ApiRoute.createcase,
-    //      context: context,
-    //      show_CircularDialog: false);
-
-    Contractdraft codeResponse = contractdraftFromJson(response.body);
-    print(codeResponse.data.caseId);
-    if(codeResponse.statusCode==200){
-      // Contractdraft succeededResponse =
-      // contractdraftFromJson(_responseBody);
-      // print(succeededResponse.data.caseId);
-      Navigator.pushReplacement(context,
-        MaterialPageRoute(builder:
-            (context) =>
-            DrawerScreen(place: Orderdetails(Order_Id: codeResponse.data.caseId))),
-      );
+    var apiUrl = null;
+    if(widget.update == true){
+      apiUrl = Uri.parse(APIService.BASE_URL2+ ApiRoute.case_updates+widget.caseID.toString());
     }else{
+      apiUrl = Uri.parse(APIService.BASE_URL2+ ApiRoute.createcase);
+    }
+    var request = http.MultipartRequest('POST', apiUrl);
+    request.fields['ServiceName'] = "case-lawsuit";
+    request.fields['ClientName'] = ServiceName;
+    request.fields['against'] = Against;
+    request.fields['Capacity'] = Capacity;
+    request.fields['CapacitSecond'] = CapacitSecond;
+    request.fields['Details'] = Details;
+    request.fields['Location'] = Location;
+    request.fields['DocumentDetails'] = DocumentDetails;
+    request.fields['Room'] = Room;
+    request.fields['Chamber'] = Chamber;
+    request.fields['AutomatedNumber'] = AutomatedNumber;
+    request.fields['ExpertLocation'] = ExpertLocation;
+    request.fields['CaseNumber'] = CaseNumber;
+    for (var file_pat  in filePath){
+      print("the paths"+file_pat!);
+      var file = await http.MultipartFile.fromPath("case_files[]", file_pat);
+      request.files.add(file);
 
     }
+    request.headers['Authorization'] = 'Bearer $token';
 
+// send the request
+    var response = await request.send();
+    print(response.toString()) ;
+
+    if (response.statusCode == 200) {
+      var responseBodyString = await response.stream.bytesToString();
+      print(responseBodyString);
+
+      if(widget.update == true){
+        Navigator.pop(context);
+        Navigator.pushReplacement(context,
+          MaterialPageRoute(builder:
+              (context) =>
+              DrawerScreen(place: Orderdetails(Order_Id: widget.caseID.toString()))),
+        );
+      }else{
+        if(_Clientname_editing_C.text!="" && _Agaist_editing_C.text !="" &&
+            _Deadline_editing_C.text != "" && _CaseNo_editing_C.text !=""&& _Chamber_editing_C.text !="") {
+          var codeResponse = contractdraftFromJson(responseBodyString);
+          if (codeResponse.statusCode == 200) {
+            Navigator.pushReplacement(context,
+              MaterialPageRoute(builder:
+                  (context) =>
+                  DrawerScreen(
+                      place: Orderdetails(Order_Id: codeResponse.data.caseId))),
+            );
+          }
+        }else{
+
+          Error succeededResponse =
+          errorFromJson(responseBodyString);
+
+          Utility.show_Dialog(context, "failed",succeededResponse.error );
+
+        }
+      }
+
+
+
+    }
   }
 
-  Future<void> get(int caseID ) async {
+  Future<void> get(String caseID ) async {
     String _responseBody = await APIService.getdataa(data: caseID,   Route: ApiRoute.case_details,
         context: context,
-        show_CircularDialog: true);
+        show_CircularDialog: false);
     print(_responseBody);
     CaseDetailsResponse casedetials_response = caseDetailsResponseFromJson(_responseBody.toString());
+    if(casedetials_response.statusCode ==200){
+      setState(() {
+        _Clientname_editing_C.text=casedetials_response.data.clientName!;
+        _Chamber_editing_C.text=casedetials_response.data.chamber!;
+        _CaseNo_editing_C.text=casedetials_response.data.courtCaseNo!;
+        _Deadline_editing_C.text=casedetials_response.data.deadline!;
+        _details_editing_C.text=casedetials_response.data.details!;
+        _Capacity_editing_C.text=casedetials_response.data.capacity!;
+        _2ndCapacity_editing_C.text=casedetials_response.data.capacity2!;
+        _Agaist_editing_C.text=casedetials_response.data.against!;
+        _Courtlocation_editing_C.text=casedetials_response.data.courtLocation!;
+        _Floor_Room_editing_C.text=casedetials_response.data.room!;
+        _Automated_editing_C.text=casedetials_response.data.automatedNo!;
+        _Expert_editing_C.text=casedetials_response.data.expertLocation!;
+        _WriteDetails_editing_C.text=casedetials_response.data.documentDetails!;
+
+      });
+    }
+
+
   }
 }

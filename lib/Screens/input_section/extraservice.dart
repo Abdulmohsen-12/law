@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:law/Screens/Contract_draft/upload.dart';
+import 'package:law/Screens/input_section/upload.dart';
 
 import '../../utils/constant.dart';
 import 'package:file_picker/file_picker.dart';

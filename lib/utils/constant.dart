@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-abstract class Constant{
+import 'package:flutter/material.dart'; class Constant{
   static const appName = "Law";
   static const splash_text1 ="إستشارة ";
   static const splash_text2 = "Consultation";
@@ -117,7 +116,7 @@ abstract class Constant{
   static const Customer_Support_txt = "Customer Support";
   static const pricelist_txt = "Price List";
   static const FAQs_txt = "FAQs";
-  static const Language_txt = "Language";
+  static final Language_txt = "Language";
   static const Sign_out_txt = "Sign-out";
 
 
@@ -148,21 +147,15 @@ abstract class Constant{
 
   //customer support
   static const Customersprt_txt = "Customer Support";
-  static const helpingtxt = "how can I help you?";
+   static const helpingtxt = "how can I help you?";
 
 
   //language
-  static const Languagetxt = "Language";
-
-
-
-
-
-
-
+  static var Languagetxt = "Language";
 
 
 }
+
 class ApiRoute{
   static const createcase = "user/create/case";
   static const case_details = "common/case/details/";
@@ -171,6 +164,7 @@ class ApiRoute{
   static const  profile = "/api/common/myprofile";
   static const  update_profile = "user/update/profile";
   static const  price_list = "common/price/list";
+  static const  file_deleted = "delete/case/file/";
   static const  about_description = "/api/common/about/english/user";
 }
 

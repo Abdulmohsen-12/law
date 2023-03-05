@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:law/Screens/Contract_draft/contract_drafting.dart';
+import 'package:law/Screens/input_section/contract_drafting.dart';
 import 'package:law/Screens/drawer_screen.dart';
 import 'package:law/Screens/payment/payment.dart';
 

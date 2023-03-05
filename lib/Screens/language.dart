@@ -7,11 +7,13 @@ import '../utils/constant.dart';
 class Language_screen extends StatefulWidget {
   @override
   _Language_screenState createState() => _Language_screenState();
+
 }
 
 class _Language_screenState extends State<Language_screen> {
   List<String> language_list = ["English","Arabic"];
   List<bool> isradiolick = [false,false];
+  int selectedLanguageIndex = 0;
   @override
   void initState() {
     // TODO: implement initState
@@ -82,12 +84,10 @@ class _Language_screenState extends State<Language_screen> {
 
                           onTap: (){
                             setState(() {
-                              if(isradiolick[0]==true){
-                                isradiolick[0]=false;
-                              }else{
-                                isradiolick[0]=true;
+                              selectedLanguageIndex = index;
+                              if (index == 0) {
+                              } else if (index == 1) {
                               }
-
                             });
 
                             // getcasedetails(openList[index].id);

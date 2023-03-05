@@ -4,7 +4,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:law/Screens/Contract_draft/upload.dart';
+import 'package:law/Screens/input_section/upload.dart';
 import '../../api/responses/error_response.dart';
 import '../../utils/Utility.dart';
 import '../common/orderdetails.dart';
@@ -536,13 +536,10 @@ class _Contract_draft_DialogState extends State<Contract_draft_Dialog> {
       context,
       MaterialPageRoute(builder: (context) => const Upload_dialog()),
     );
-     print("after getting result"+result.toString());
 
 
   }
   Future<void> postdata(String ServiceName,String Purpose,String ContractTerm,String Ammount,String Details,StringDeadline, List<String?> filePath,String? audioPath ) async {
-    print("servicenamee"+filePath.toString());
-    print("servicenamee"+StringDeadline);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     print(prefs.getString("accesstoken"));
     String? token=prefs.getString("accesstoken");
@@ -605,7 +602,6 @@ class _Contract_draft_DialogState extends State<Contract_draft_Dialog> {
 
       Error succeededResponse =
       errorFromJson(responseBodyString);
-      print("responsees"+succeededResponse.toString());
 
       Utility.show_Dialog(context, "failed",succeededResponse.error );
 

@@ -349,12 +349,19 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
     } else {
-      Error succeededResponse =
-      errorFromJson(response.body);
-      APIService.checkAndShowCircularDialog(context, true);
-      Utility.show_Dialog(context, "failed",succeededResponse.error );
-      print("failed"+response.body);
-      print('error');
+      print("status 400");
+      if(codeResponse.statusCode == 400){
+        APIService.checkAndShowCircularDialog(context, true);
+        Utility.show_Dialog(context, "failed", "server error");
+      }else {
+        APIService.checkAndShowCircularDialog(context, true);
+        Error succeededResponse =
+        errorFromJson(response.body);
+
+        Utility.show_Dialog(context, "failed", succeededResponse.error);
+        print("failed" + response.body);
+        print('error');
+      }
     }
   }
 
