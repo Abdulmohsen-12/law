@@ -564,49 +564,52 @@ class _SignupscreenState extends State<Signupscreen> {
     );
   }
   Future postData(BuildContext context,String name,String email,String password,String number) async {
-    print("clicked"+name);
-    print("clicked"+email);
-    print("clicked"+password);
-    print("clicked"+number);
+    print("clicked" + name);
+    print("clicked" + email);
+    print("clicked" + password);
+    print("clicked" + number);
     APIService.checkAndShowCircularDialog(context, true);
-    var apiUrl = Uri.parse(APIService.AUTH_BASE_URL+LoginRepo.ROUTE_AUTHORIZE_URL);
-    print("clicked"+apiUrl.toString());
+    var apiUrl = Uri.parse(
+        APIService.AUTH_BASE_URL + LoginRepo.ROUTE_AUTHORIZE_URL);
+    print("clicked" + apiUrl.toString());
     var response = await http.post(apiUrl,
         body: {
-          "name":name,
-          "email":email,
-          "password":password,
-          "confirm_password":password,
-          "phone_no":"+88"+number
-
+          "name": name,
+          "email": email,
+          "password": password,
+          "confirm_password": password,
+          "phone_no": "+88" + number
         });
-    print("response to"+jsonDecode(response.body).toString());
-print("response"+response.statusCode.toString());
+    print("response to" + jsonDecode(response.body).toString());
+    print("response" + response.statusCode.toString());
+    if (response.statusCode == 500) {
+      APIService.checkAndShowCircularDialog(context, true);
+      Utility.show_Dialog(context, "failed", "server error");
+    }
     statuscode codeResponse =
     errorcodeFromJson(response.body);
-    print(codeResponse.statusCode);
-    if (codeResponse.statusCode == 200) {
-      APIService.checkAndShowCircularDialog(context, true);
-      print("failed"+response.statusCode.toString());
-      Login succeededResponse =
-      lognFromJson(response.body);
-      Utility.show_Dialog(
-          context, "success", succeededResponse.data.toString());
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) =>LoginScreen()),
-      );
 
 
-    }
-    else {
-      Error succeededResponse =
-      errorFromJson(response.body);
-      APIService.checkAndShowCircularDialog(context, true);
-      Utility.show_Dialog(context, "failed", succeededResponse.error);
+      print(codeResponse.statusCode);
+      if (codeResponse.statusCode == 200) {
+        APIService.checkAndShowCircularDialog(context, true);
+        print("failed" + response.statusCode.toString());
+        Login succeededResponse =
+        loginFromJson(response.body);
+        Utility.show_Dialog(
+            context, "success", succeededResponse.data.toString());
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+        );
+      }
+      else {
+        print("server errr" + codeResponse.statusCode.toString());
+
+        Error succeededResponse =
+        errorFromJson(response.body);
+        APIService.checkAndShowCircularDialog(context, true);
+        Utility.show_Dialog(context, "failed", succeededResponse.error);
+      }
     }
   }
-
-
-
-}

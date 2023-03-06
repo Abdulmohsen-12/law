@@ -52,10 +52,14 @@ dev_dependencies:
   internet_connection_checker: ^0.0.1+2
   shared_preferences: ^2.0.11
   flutter_zoom_drawer: ^3.0.3
-  file_picker: ^5.2.4
+  file_picker: ^4.1.6
   audio_waveforms: ^1.0.0
   mime_type: ^1.0.0
   syncfusion_flutter_calendar: ^20.4.44
+  path_provider: ^2.0.12
+  open_file: ^3.0.1
+  url_launcher: ^6.1.10
+  permission_handler: ^10.2.0
 
 
 

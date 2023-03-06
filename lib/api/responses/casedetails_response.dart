@@ -54,11 +54,13 @@ class Data {
     this.courtCaseNo,
     required this.details,
     required this.caseStatus,
+    required this.createTime,
+    required this.attachments,
     // required this.createTime,
   });
 
-  int id;
-  int uid;
+  String id;
+  String uid;
   String orderNo;
   String serviceName;
   int serviceCategory;
@@ -81,6 +83,8 @@ class Data {
   dynamic courtCaseNo;
   String? details;
   int caseStatus;
+  DateTime createTime;
+  List<Attachment> attachments;
   // DateTime createTime;
 
 
@@ -109,6 +113,8 @@ class Data {
     courtCaseNo: json["court_case_no"],
     details: json["details"],
     caseStatus: json["case_status"],
+    createTime: DateTime.parse(json["create_time"]),
+    attachments: List<Attachment>.from(json["attachments"].map((x) => Attachment.fromJson(x))),
     // createTime: DateTime.parse(json["create_time"]),
 
   );
@@ -138,7 +144,49 @@ class Data {
     "court_case_no": courtCaseNo,
     "details": details,
     "case_status": caseStatus,
+    "create_time": createTime.toIso8601String(),
+    "attachments": List<dynamic>.from(attachments.map((x) => x.toJson())),
+
     // "create_time": createTime.toIso8601String(),
 
+  };
+}
+class Attachment {
+  Attachment({
+    required this.id,
+    required this.caseId,
+    required this.link,
+    required this.fileName,
+    required this.storeLink,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  String id;
+  String caseId;
+  String link;
+  String fileName;
+  String storeLink;
+  DateTime createdAt;
+  DateTime updatedAt;
+
+  factory Attachment.fromJson(Map<String, dynamic> json) => Attachment(
+    id: json["id"],
+    caseId: json["case_id"],
+    link: json["link"],
+    fileName: json["file_name"],
+    storeLink: json["storeLink"],
+    createdAt: DateTime.parse(json["created_at"]),
+    updatedAt: DateTime.parse(json["updated_at"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "case_id": caseId,
+    "link": link,
+    "file_name": fileName,
+    "storeLink": storeLink,
+    "created_at": createdAt.toIso8601String(),
+    "updated_at": updatedAt.toIso8601String(),
   };
 }

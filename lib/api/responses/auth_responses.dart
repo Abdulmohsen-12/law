@@ -1,10 +1,10 @@
 // To parse this JSON data, do
 //
-//     final welcome = welcomeFromJson(jsonString);
+//     final login = loginFromJson(jsonString);
 
 import 'dart:convert';
 
-Login lognFromJson(String str) => Login.fromJson(json.decode(str));
+Login loginFromJson(String str) => Login.fromJson(json.decode(str));
 
 String loginToJson(Login data) => json.encode(data.toJson());
 
@@ -63,8 +63,8 @@ class User {
     required this.accountType,
     required this.email,
     required this.userType,
-    required  this.loginType,
-    required   this.phoneNo,
+    required this.loginType,
+    required this.phoneNo,
     this.photo,
     this.photoUrl,
     this.socialEmail,
@@ -72,9 +72,10 @@ class User {
     this.gender,
     required this.balance,
     this.notes,
+    this.otherInfo,
   });
 
-  int id;
+  String id;
   String name;
   int accountType;
   String email;
@@ -88,6 +89,7 @@ class User {
   dynamic gender;
   int balance;
   dynamic notes;
+  dynamic otherInfo;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
     id: json["id"],
@@ -104,6 +106,7 @@ class User {
     gender: json["gender"],
     balance: json["balance"],
     notes: json["notes"],
+    otherInfo: json["other_info"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -121,5 +124,6 @@ class User {
     "gender": gender,
     "balance": balance,
     "notes": notes,
+    "other_info": otherInfo,
   };
 }

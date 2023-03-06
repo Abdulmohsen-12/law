@@ -56,7 +56,7 @@ class Open {
     required this.service_name,
   });
 
-  int id;
+  String id;
   String orderNo;
   int caseStatus;
   String service_name;

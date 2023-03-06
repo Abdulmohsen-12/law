@@ -2,11 +2,11 @@
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:law/Screens/Contract_draft/lawsuit.dart';
+import 'package:law/Screens/input_section/lawsuit.dart';
 import 'package:law/Screens/my_orders/My_Orders.dart';
 import '../../utils/constant.dart';
-import 'Contract_draft/consultion.dart';
-import 'Contract_draft/contract_drafting.dart';
+import 'input_section/consultion.dart';
+import 'input_section/contract_drafting.dart';
 import 'drawer_screen.dart';
 import 'other.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';

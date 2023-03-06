@@ -318,6 +318,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future loginpostData(String email,String password) async {
+    APIService.checkAndShowCircularDialog(context, true);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var apiUrl = Uri.parse(APIService.AUTH_BASE_URL+LoginRepo.ROUTE_LOGIN_URL);
 
@@ -332,27 +333,35 @@ class _LoginScreenState extends State<LoginScreen> {
     statuscode codeResponse =
     errorcodeFromJson(response.body);
     print(codeResponse.statusCode);
-    APIService.checkAndShowCircularDialog(context, true);
+
 
     if (codeResponse.statusCode == 200) {
-      APIService.checkAndShowCircularDialog(context, true);
+
       Login succeededResponse =
-      lognFromJson(response.body);
+      loginFromJson(response.body);
       print("successfull"+succeededResponse.data.user.name);
       prefs.setString("accesstoken",succeededResponse.data.accessToken);
-      Navigator.pushReplacement(context,
+      APIService.checkAndShowCircularDialog(context, true);
+      Navigator.push(context,
         MaterialPageRoute(builder:
             (context) =>
             DrawerScreen(place: Home_Screen(),)),
       );
 
     } else {
-      Error succeededResponse =
-      errorFromJson(response.body);
-      APIService.checkAndShowCircularDialog(context, true);
-      Utility.show_Dialog(context, "failed",succeededResponse.error );
-      print("failed"+response.body);
-      print('error');
+      print("status 400");
+      if(codeResponse.statusCode == 400){
+        APIService.checkAndShowCircularDialog(context, true);
+        Utility.show_Dialog(context, "failed", "server error");
+      }else {
+        APIService.checkAndShowCircularDialog(context, true);
+        Error succeededResponse =
+        errorFromJson(response.body);
+
+        Utility.show_Dialog(context, "failed", succeededResponse.error);
+        print("failed" + response.body);
+        print('error');
+      }
     }
   }
 

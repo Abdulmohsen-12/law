@@ -8,7 +8,7 @@ import '../../api/responses/errror_respom.dart';
 import '../../api/responses/my_orders_response.dart';
 import '../../api/services/api_service.dart';
 import '../../utils/constant.dart';
-import '../orderdetails.dart';
+import '../common/orderdetails.dart';
 
 class My_order_screen extends StatefulWidget {
   @override
@@ -16,7 +16,6 @@ class My_order_screen extends StatefulWidget {
 }
 
 class _My_order_screenState extends State<My_order_screen> {
-  final List<String> entries = <String>['Visa Card', 'Master Card', 'Knet'];
   List<Open> openList = [];
   List<Open> closedlist = [];
   bool statuscodeq=false;
@@ -45,7 +44,7 @@ class _My_order_screenState extends State<My_order_screen> {
         title: Stack(
           alignment: Alignment.center,
           children: [
-            Align(
+            Align  (
                 alignment: Alignment.centerLeft,
                 child: InkWell(
                   onTap: (){
@@ -294,7 +293,6 @@ class _My_order_screenState extends State<My_order_screen> {
     errorcodeFromJson(_responseBody);
     print(codeResponse.statusCode);
     if(codeResponse.statusCode==200){
-      APIService.checkAndShowCircularDialog(context, true);
 
       setState(() {
         statuscodeq=true;
